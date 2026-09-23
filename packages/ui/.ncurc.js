@@ -1,11 +1,13 @@
 /*
   Pinned:
-  - cookie
-    - v2.0.0 contains breaking changes
-  - cookies-next
-    - v5 contains breaking changes
-  - undici
-    - v6 supports node v20. Higher versions need > node v20
+    - cookie
+      - v2.0.0 contains breaking changes
+    - cookies-next
+      - v5 contains breaking changes
+    - cypress
+      - v16 contains breaking changes and breaks cypress-axe
+    - undici
+      - v6 supports node v20. Higher versions need > node v20
 
   Ignored:
     - cypress-circleci-reporter
@@ -14,7 +16,7 @@
       - v4 breaks our CI
 */
 
-const pinned = ["cookie", "cookies-next", "undici"]
+const pinned = ["cookie", "cookies-next", "cypress", "undici"]
 const ignored = ["cypress-circleci-reporter", "raw-body"]
 const skipped = []
 
@@ -37,7 +39,7 @@ module.exports = {
   },
 
   filterResults: (pkg, { upgradedVersion }) => {
-    if (ignored.some((ignore) => ignore.pkg === pkg)) {
+    if (ignored.some((ignore) => ignore === pkg)) {
       return false
     }
     if (skipped.some((skip) => skip.pkg === pkg && skip.version === upgradedVersion)) {
