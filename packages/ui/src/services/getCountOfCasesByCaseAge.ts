@@ -42,9 +42,11 @@ const getCountOfCasesByCaseAge = async (
     })
   )
 
-  query.andWhere("trigger.triggerCode NOT IN (:...excludedTriggers)", {
-    excludedTriggers: getExcludedTriggers(excludedTriggers)
-  })
+  if (excludedTriggers.length > 0) {
+    query.andWhere("trigger.triggerCode NOT IN (:...excludedTriggers)", {
+      excludedTriggers: getExcludedTriggers(excludedTriggers)
+    })
+  }
 
   return await query.getRawOne().catch((error: Error) => error)
 }

@@ -155,7 +155,7 @@ describe("listCourtCases", () => {
         visibleCourts: [],
         visibleForces: [forceCode]
       } as Partial<User> as User,
-      []
+      [TriggerCode.TRPR0001]
     )) as Record<string, number>
 
     expect(isError(result)).toBeFalsy()
