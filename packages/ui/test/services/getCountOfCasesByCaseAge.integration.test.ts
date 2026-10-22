@@ -68,7 +68,7 @@ describe("listCourtCases", () => {
         visibleCourts: [],
         visibleForces: [forceCode]
       } as Partial<User> as User,
-      [""]
+      []
     )) as Record<string, number>
 
     expect(isError(result)).toBeFalsy()
@@ -97,7 +97,7 @@ describe("listCourtCases", () => {
         visibleCourts: [],
         visibleForces: [forceCode]
       } as Partial<User> as User,
-      [""]
+      []
     )) as Record<string, number>
 
     expect(isError(result)).toBeFalsy()
@@ -121,7 +121,7 @@ describe("listCourtCases", () => {
         visibleCourts: [],
         visibleForces: [forceCode]
       } as Partial<User> as User,
-      [""]
+      []
     )) as Record<string, number>
 
     expect(isError(result)).toBeFalsy()
@@ -155,7 +155,7 @@ describe("listCourtCases", () => {
         visibleCourts: [],
         visibleForces: [forceCode]
       } as Partial<User> as User,
-      [""]
+      []
     )) as Record<string, number>
 
     expect(isError(result)).toBeFalsy()
@@ -171,7 +171,7 @@ describe("listCourtCases", () => {
           visibleCourts: [],
           visibleForces: [forceCode]
         } as Partial<User> as User,
-        [""]
+        []
       )) as Record<string, number>
 
       expect(isError(result)).toBeFalsy()
@@ -195,7 +195,7 @@ describe("listCourtCases", () => {
           visibleCourts: [],
           visibleForces: [forceCode]
         } as Partial<User> as User,
-        [""]
+        []
       )
       expect(isError(result)).toBe(true)
 

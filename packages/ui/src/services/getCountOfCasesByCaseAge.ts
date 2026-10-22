@@ -1,3 +1,4 @@
+import { getExcludedTriggers } from "@/utils/getExcludedTriggers"
 import type { DataSource } from "typeorm"
 import { Brackets } from "typeorm"
 import type PromiseResult from "types/PromiseResult"
@@ -41,11 +42,9 @@ const getCountOfCasesByCaseAge = async (
     })
   )
 
-  if (excludedTriggers.length > 0) {
-    query.andWhere("trigger.triggerCode NOT IN (:...excludedTriggers)", {
-      excludedTriggers: excludedTriggers
-    })
-  }
+  query.andWhere("trigger.triggerCode NOT IN (:...excludedTriggers)", {
+    excludedTriggers: getExcludedTriggers(excludedTriggers)
+  })
 
   return await query.getRawOne().catch((error: Error) => error)
 }
