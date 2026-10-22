@@ -41,7 +41,7 @@ const getCountOfCasesByCaseAge = async (
     })
   )
 
-  if (user.excludedTriggers && user.excludedTriggers.length > 0) {
+  if (excludedTriggers.length > 0) {
     query.andWhere("trigger.triggerCode NOT IN (:...excludedTriggers)", {
       excludedTriggers: excludedTriggers
     })
