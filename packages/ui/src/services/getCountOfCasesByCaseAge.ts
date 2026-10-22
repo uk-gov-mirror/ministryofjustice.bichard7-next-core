@@ -8,12 +8,16 @@ import type User from "./entities/User"
 import courtCasesByOrganisationUnitQuery from "./queries/courtCasesByOrganisationUnitQuery"
 import leftJoinAndSelectTriggersQuery from "./queries/leftJoinAndSelectTriggersQuery"
 
-const getCountOfCasesByCaseAge = async (connection: DataSource, user: User): PromiseResult<Record<string, number>> => {
+const getCountOfCasesByCaseAge = async (
+  connection: DataSource,
+  user: User,
+  excludedTriggers: string[]
+): PromiseResult<Record<string, number>> => {
   const repository = connection.getRepository(CourtCase)
   let query = repository.createQueryBuilder("courtCase")
 
   query = courtCasesByOrganisationUnitQuery(query, user)
-  query = leftJoinAndSelectTriggersQuery(query, user.excludedTriggers)
+  query = leftJoinAndSelectTriggersQuery(query, excludedTriggers)
 
   Object.keys(CaseAgeOptions).forEach((slaCaseAgeOption, i) => {
     const key = slaCaseAgeOption
