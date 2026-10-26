@@ -8,6 +8,7 @@ const excludedTriggerConfig = () => {
     excludedTriggers["36"].push(TriggerCode.TRPR0004)
     excludedTriggers["36"].push(TriggerCode.TRPR0027)
 
+    // exclude trigger 31 for all forces in tests, other than force 54 which is used to test tr31
     Object.keys(excludedTriggers).forEach((forceCode) => {
       if (forceCode !== "54") {
         if (!excludedTriggers[forceCode].includes(TriggerCode.TRPR0031)) {
