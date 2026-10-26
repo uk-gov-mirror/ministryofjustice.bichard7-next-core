@@ -7,7 +7,12 @@ const excludedTriggerConfig = () => {
     excludedTriggers["42"] = [TriggerCode.TRPR0001]
     excludedTriggers["36"].push(TriggerCode.TRPR0004)
     excludedTriggers["36"].push(TriggerCode.TRPR0027)
-    excludedTriggers["01"] = [TriggerCode.TRPR0031]
+
+    Object.keys(excludedTriggers).forEach((forceCode) => {
+      if (!excludedTriggers[forceCode].includes(TriggerCode.TRPR0031)) {
+        excludedTriggers[forceCode].push(TriggerCode.TRPR0031)
+      }
+    })
   }
 
   return excludedTriggers
