@@ -3,7 +3,7 @@ import TriggerCode from "@moj-bichard7-developers/bichard7-next-data/dist/types/
 
 const excludedTriggerConfig = () => {
   if (process.env.NODE_ENV === "test" && "01" in excludedTriggers) {
-    delete excludedTriggers["01"]
+    excludedTriggers["01"] = [TriggerCode.TRPR0031]
     excludedTriggers["42"] = [TriggerCode.TRPR0001]
     excludedTriggers["36"].push(TriggerCode.TRPR0004)
     excludedTriggers["36"].push(TriggerCode.TRPR0027)
