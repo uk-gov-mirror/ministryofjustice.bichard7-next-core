@@ -9,8 +9,10 @@ const excludedTriggerConfig = () => {
     excludedTriggers["36"].push(TriggerCode.TRPR0027)
 
     Object.keys(excludedTriggers).forEach((forceCode) => {
-      if (!excludedTriggers[forceCode].includes(TriggerCode.TRPR0031)) {
-        excludedTriggers[forceCode].push(TriggerCode.TRPR0031)
+      if (forceCode !== "54") {
+        if (!excludedTriggers[forceCode].includes(TriggerCode.TRPR0031)) {
+          excludedTriggers[forceCode].push(TriggerCode.TRPR0031)
+        }
       }
     })
   }
