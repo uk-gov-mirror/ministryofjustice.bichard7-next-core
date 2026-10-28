@@ -9,6 +9,7 @@ const retryRequest = async <T extends AxiosResponse>(request: () => Promise<T>):
   let attempts = 0
   while (true) {
     const response = await request().catch((error: AxiosError) => error)
+    console.log(response.status, response.config?.url)
     if (response.status === HttpStatusCode.BadGateway) {
       if (++attempts > MAX_ATTEMPTS) {
         return response
