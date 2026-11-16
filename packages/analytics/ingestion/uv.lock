@@ -818,7 +818,6 @@ source = { editable = "." }
 dependencies = [
     { name = "boto3" },
     { name = "dlt", extra = ["hub", "s3"] },
-    { name = "ibis-framework" },
     { name = "pyarrow" },
     { name = "pyiceberg" },
     { name = "smart-open" },
@@ -828,6 +827,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "duckdb" },
+    { name = "ibis-framework" },
     { name = "marimo" },
     { name = "pytest" },
     { name = "streamlit" },
@@ -837,7 +837,6 @@ dev = [
 requires-dist = [
     { name = "boto3", specifier = ">=1.43.36" },
     { name = "dlt", extras = ["hub", "s3"], specifier = ">=1.31.0" },
-    { name = "ibis-framework", specifier = ">=12.0.0" },
     { name = "pyarrow", specifier = ">=26.0.0" },
     { name = "pyiceberg", specifier = ">=0.12.0" },
     { name = "smart-open", specifier = ">=9.0.0" },
@@ -847,6 +846,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "duckdb", specifier = ">=1.5,<2.0.0" },
+    { name = "ibis-framework", specifier = ">=12.0.0" },
     { name = "marimo", specifier = ">=0.25.2" },
     { name = "pytest", specifier = ">=9.1.1" },
     { name = "streamlit", specifier = ">=1.66.1" },
