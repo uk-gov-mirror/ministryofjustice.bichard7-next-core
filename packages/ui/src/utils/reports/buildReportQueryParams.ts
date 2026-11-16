@@ -1,6 +1,6 @@
 import type AuditResolvedBy from "@/types/AuditResolvedBy"
 import type { FilterState } from "@/types/reports/ReportSelectionFilter"
-import { forceCatchmentAreas } from "@moj-bichard7-developers/bichard7-next-data"
+import { forceCatchmentAreas } from "@moj-bichard7/standing-data"
 import type { ReportType } from "@moj-bichard7/common/types/reports/ReportType"
 import { TRPR0031_RESULTS } from "@moj-bichard7/common/utils/triggerConstants"
 
