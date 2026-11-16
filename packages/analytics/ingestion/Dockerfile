@@ -28,7 +28,7 @@ COPY packages/analytics/ingestion/pyproject.toml packages/analytics/ingestion/uv
 
 # Install the project's dependencies using the lockfile and settings
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --locked --no-install-project --no-build
+    uv sync --locked --no-install-project --no-build --no-dev
 
 # Then, add the rest of the project source code and install it
 # Installing separately from its dependencies allows optimal layer caching
