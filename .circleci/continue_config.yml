@@ -318,9 +318,14 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y pigz
       - fetch_images:
           images: nodejs-24-2023 nginx-nodejs-24-2023-supervisord
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:+t2dwP7Q3Y9g4l0xMPUipqLerONy+AEm/7B9MeuDQRA"
       - run:
           name: Clone bichard7-next-audit-logging
-          command: git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-audit-logging.git /home/circleci/bichard7-next-audit-logging
+          command: |
+            printf "Host bichard7-next-audit-logging\n  HostName github.com\n  IdentityFile ~/.ssh/id_rsa_9208d2cf48a4635a3762ee3dfc27d267\n  IdentitiesOnly yes\n" >> ~/.ssh/config
+            git clone --depth 1 https://github.com/ministryofjustice/bichard7-next-audit-logging.git /home/circleci/bichard7-next-audit-logging
       - build_and_cache_image:
           image_name: "audit-log-api"
           dockerfile: "/home/circleci/bichard7-next-audit-logging/src/audit-log-api/Dockerfile"
