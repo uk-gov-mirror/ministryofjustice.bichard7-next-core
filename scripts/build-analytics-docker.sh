@@ -2,13 +2,7 @@
 
 set -e
 
-readonly DOCKER_BUILD_IMAGE="amazon-linux2023-base"
 readonly DOCKER_OUTPUT_TAG="analytics-ingestion"
-
-function has_local_image() {
-  IMAGES=$(docker images --filter=reference="${DOCKER_BUILD_IMAGE}:*" -q | wc -l)
-  echo "${IMAGES}"
-}
 
 function pull_and_build_from_aws() {
   FETCHED_AWS_ACCOUNT_ID=$(
@@ -37,17 +31,12 @@ function pull_and_build_from_aws() {
     --password-stdin \
     "${AWS_ACCOUNT_ID}.dkr.ecr.eu-west-2.amazonaws.com"
 
-  # Get our latest staged amazon linux image
-  IMAGE_HASH=$(aws ecr describe-images --repository-name "${DOCKER_BUILD_IMAGE}" | jq '.imageDetails|sort_by(.imagePushedAt)[-1].imageDigest' | tr -d '"')
-
-  DOCKER_IMAGE_HASH="${AWS_ACCOUNT_ID}.dkr.ecr.eu-west-2.amazonaws.com/${DOCKER_BUILD_IMAGE}@${IMAGE_HASH}"
-
-  docker build --build-arg "BUILD_IMAGE=${DOCKER_IMAGE_HASH}" -t ${DOCKER_OUTPUT_TAG}:latest -f packages/analytics/ingestion/Dockerfile .
+  docker build -t ${DOCKER_OUTPUT_TAG}:latest -f packages/analytics/ingestion/Dockerfile .
 
   if [[ -n "${CODEBUILD_RESOLVED_SOURCE_VERSION}" && -n "${CODEBUILD_START_TIME}" ]]; then
 
     ## Run goss tests
-    GOSS_FILES_PATH=packages/analytics/ingestion dgoss run "${DOCKER_OUTPUT_TAG}:latest"
+    GOSS_FILES_PATH=packages/analytics/ingestion dgoss run --entrypoint="" "${DOCKER_OUTPUT_TAG}:latest" sleep infinity
 
     docker tag \
       ${DOCKER_OUTPUT_TAG}:latest \
@@ -72,9 +61,9 @@ EOF
   fi
 }
 
-if [[ "$(has_local_image)" -gt 0 ]]; then
-  echo "Building local image"
-  docker build -f packages/analytics/ingestion/Dockerfile -t ${DOCKER_OUTPUT_TAG}:latest  .
-else
+if [[ "${IS_CD}" == "true" ]]; then
   pull_and_build_from_aws
+else
+  echo "Building local image"
+  docker build -f packages/analytics/ingestion/Dockerfile -t "${DOCKER_OUTPUT_TAG}:latest" .
 fi
