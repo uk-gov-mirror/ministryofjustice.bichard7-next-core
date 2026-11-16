@@ -2,14 +2,11 @@ import createDbConfig from "@moj-bichard7/common/db/createDbConfig"
 import { type AnnotatedHearingOutcome } from "@moj-bichard7/common/types/AnnotatedHearingOutcome"
 import postgres from "postgres"
 
+import type { onsPostcodeMappingRow } from "../../schemas/onsPostcodeMapping"
 import type ErrorListRecord from "../../types/ErrorListRecord"
 
 import generateMockPhase1Result from "../../phase1/tests/helpers/generateMockPhase1Result"
-import getPoliceForceAreaCode from "./getPoliceForceAreaCode"
 import insertErrorListRecord from "./insertErrorListRecord"
-
-jest.mock("./getPoliceForceAreaCode")
-const mockedGetPoliceForceAreaCode = jest.mocked(getPoliceForceAreaCode)
 
 const dbConfig = createDbConfig()
 const db = postgres({
@@ -26,13 +23,21 @@ const db = postgres({
   }
 })
 
+const record1: onsPostcodeMappingRow = { postcode: "SW1A 1AA", police_force_area: "E2300001" }
+const record2: onsPostcodeMappingRow = { postcode: "M1 1AE", police_force_area: "E2300005" }
+
 describe("insertErrorListRecord", () => {
+  beforeAll(async () => {
+    await db<onsPostcodeMappingRow[]>`INSERT INTO br7own.ons_postcode_mappings ${db([record1, record2])}`
+  })
+
   beforeEach(async () => {
     await db`DELETE FROM br7own.error_list`
     jest.resetAllMocks()
   })
 
   afterAll(async () => {
+    await db`DELETE FROM br7own.ons_postcode_mappings`
     await db.end()
   })
 
@@ -52,8 +57,7 @@ describe("insertErrorListRecord", () => {
     expect(insertedRecord.message_id).toBe(messageId)
   })
 
-  it("should assign police force area code when getPoliceForceAreaCode returns a PFA code", async () => {
-    mockedGetPoliceForceAreaCode.mockResolvedValue({ postcode: "SW1A 1AA", police_force_area: "E2300001" })
+  it("should assign correct police force area code when valid postcode provided", async () => {
     const result = generateMockPhase1Result()
 
     result.hearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Address = {
@@ -62,8 +66,6 @@ describe("insertErrorListRecord", () => {
     }
 
     const recordId = await insertErrorListRecord(db, result)
-
-    expect(mockedGetPoliceForceAreaCode).toHaveBeenCalledWith(db, "SW1A 1AA")
 
     const insertedRecord = (
       await db<ErrorListRecord[]>`
@@ -73,18 +75,33 @@ describe("insertErrorListRecord", () => {
     expect(insertedRecord.police_force_area).toBe("E2300001")
   })
 
-  it("should not assign police force area code when getPoliceForceAreaCode returns error", async () => {
-    mockedGetPoliceForceAreaCode.mockResolvedValue(new Error())
+  it("should not assign police force area code when no postcode is provided", async () => {
     const result = generateMockPhase1Result()
 
     result.hearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Address = {
       AddressLine1: "Line 1",
-      AddressLine5: "SW1A 1AA"
+      AddressLine5: "Line 2"
     }
 
     const recordId = await insertErrorListRecord(db, result)
 
-    expect(mockedGetPoliceForceAreaCode).toHaveBeenCalledWith(db, "SW1A 1AA")
+    const insertedRecord = (
+      await db<ErrorListRecord[]>`
+      SELECT * FROM br7own.error_list WHERE error_id = ${recordId}`
+    )[0]
+
+    expect(insertedRecord.police_force_area).toBeNull()
+  })
+
+  it("should not assign police force area code when provided postcode doesn't exist in the mappings table", async () => {
+    const result = generateMockPhase1Result()
+
+    result.hearingOutcome.AnnotatedHearingOutcome.HearingOutcome.Case.HearingDefendant.Address = {
+      AddressLine1: "Line 1",
+      AddressLine5: "SW1A 1XX"
+    }
+
+    const recordId = await insertErrorListRecord(db, result)
 
     const insertedRecord = (
       await db<ErrorListRecord[]>`
